@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="256" viewBox="0 0 760 256">
+<rect width="760" height="256" rx="10" fill="#272220"/>
+<rect width="760" height="34" rx="10" fill="#211d1b"/>
+<rect y="24" width="760" height="10" fill="#211d1b"/>
+<text x="380" y="22" text-anchor="middle" font-family="-apple-system,Segoe UI,sans-serif" font-size="12" fill="#ab9c90">Ember Dusk Soft · kindle.ts</text>
+<rect x="0" y="107" width="760" height="22" fill="#e8e0d80a"/>
+<g font-family="JetBrains Mono,Menlo,Consolas,monospace" font-size="13.5" xml:space="preserve">
+<text x="44" y="56" text-anchor="end" fill="#7c6e65">1</text>
+<text x="64" y="56"><tspan fill="#998a7e" font-style="italic">//&#160;Ember&#160;Dusk:&#160;warm&#160;colors,&#160;AA&#160;contrast&#160;everywhere</tspan></text>
+<text x="44" y="78" text-anchor="end" fill="#7c6e65">2</text>
+<text x="64" y="78"><tspan fill="#d895a6">import</tspan><tspan fill="#ab9c90">&#160;{&#160;</tspan><tspan fill="#d8bf8c">Ember</tspan><tspan fill="#ab9c90">&#160;}&#160;</tspan><tspan fill="#d895a6">from</tspan><tspan fill="#a8bd7d">&#160;"./fire"</tspan><tspan fill="#ab9c90">;</tspan></text>
+<text x="44" y="100" text-anchor="end" fill="#7c6e65">3</text>
+<text x="64" y="100"></text>
+<text x="44" y="122" text-anchor="end" fill="#e3b265">4</text>
+<text x="64" y="122"><tspan fill="#e8915c">export</tspan><tspan fill="#e8915c">&#160;async&#160;function&#160;</tspan><tspan fill="#e3b265" font-weight="600">kindle</tspan><tspan fill="#c0b4a9">(</tspan><tspan fill="#e6ceaa">heat</tspan><tspan fill="#ab9c90">:&#160;</tspan><tspan fill="#d8bf8c" font-style="italic">number</tspan><tspan fill="#c0b4a9">)&#160;{</tspan></text>
+<text x="44" y="144" text-anchor="end" fill="#7c6e65">5</text>
+<text x="64" y="144"><tspan fill="#e8915c">&#160;&#160;const&#160;</tspan><tspan fill="#e8e0d8">flame</tspan><tspan fill="#e8b594">&#160;=&#160;</tspan><tspan fill="#e8915c">new&#160;</tspan><tspan fill="#d8bf8c">Ember</tspan><tspan fill="#c0b4a9">({&#160;</tspan><tspan fill="#8fb4c4">glow</tspan><tspan fill="#ab9c90">:&#160;</tspan><tspan fill="#d895a6">0.82</tspan><tspan fill="#ab9c90">,&#160;</tspan><tspan fill="#8fb4c4">lit</tspan><tspan fill="#ab9c90">:&#160;</tspan><tspan fill="#d895a6">true</tspan><tspan fill="#c0b4a9">&#160;});</tspan></text>
+<text x="44" y="166" text-anchor="end" fill="#7c6e65">6</text>
+<text x="64" y="166"><tspan fill="#e8915c">&#160;&#160;if&#160;</tspan><tspan fill="#c0b4a9">(</tspan><tspan fill="#e8e0d8">heat</tspan><tspan fill="#e8b594">&#160;&gt;&#160;</tspan><tspan fill="#d895a6">MAX_HEAT</tspan><tspan fill="#c0b4a9">)&#160;</tspan><tspan fill="#e8915c" font-style="italic">return&#160;</tspan><tspan fill="#a8bd7d">`too&#160;hot:&#160;</tspan><tspan fill="#94bfae">${heat}</tspan><tspan fill="#a8bd7d">`</tspan><tspan fill="#ab9c90">;</tspan></text>
+<text x="44" y="188" text-anchor="end" fill="#7c6e65">7</text>
+<text x="64" y="188"><tspan fill="#e8915c" font-style="italic">&#160;&#160;return&#160;await&#160;</tspan><tspan fill="#e8e0d8">flame</tspan><tspan fill="#ab9c90">.</tspan><tspan fill="#e3b265">spread</tspan><tspan fill="#c0b4a9">(</tspan><tspan fill="#94bfae">/sparks?/g</tspan><tspan fill="#c0b4a9">);</tspan></text>
+<text x="44" y="210" text-anchor="end" fill="#7c6e65">8</text>
+<text x="64" y="210"><tspan fill="#c0b4a9">}</tspan></text>
+</g>
+</svg>
