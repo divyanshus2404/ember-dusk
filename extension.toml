@@ -1,7 +1,7 @@
 id = "ember-dusk"
 name = "Ember Dusk"
-version = "0.1.0"
+version = "0.2.0"
 schema_version = 1
 authors = ["Divyanshu Singh <177622442+divyanshus2404@users.noreply.github.com>"]
-description = "Warm theme family: charcoal backgrounds, ember orange accents, WCAG AA contrast on every token. Dark, Deep, Soft and light variants."
+description = "Warm theme family: charcoal backgrounds, ember orange accents, WCAG AA contrast on every token. Dark, Deep, Soft, High Contrast and light variants."
 repository = "https://github.com/divyanshus2404/ember-dusk"

@@ -2,20 +2,30 @@
 """Builds themes/ember-dusk.json and previews/*.svg from the palettes below.
 
 Every foreground color is nudged until it meets a minimum WCAG contrast ratio
-against the editor background, so all variants stay readable by construction.
+against the editor background, and the added/deleted/modified colors are tuned
+until they stay distinguishable under protanopia, deuteranopia and tritanopia.
 
     python3 scripts/build.py
 """
 import colorsys
 import json
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cvd import worst  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 
-# Minimum contrast against the editor background (WCAG AA is 4.5).
+# Minimum contrast against the editor background (WCAG AA is 4.5, AAA is 7).
+# A variant can raise these with "min_code" / "min_muted".
 MIN_CODE = 4.5      # every syntax token, comments included
 MIN_MUTED = 4.5     # muted UI text
 MIN_SOFT = 3.0      # line numbers, placeholders (non-essential text)
+
+# Minimum CIELAB distance between paired status colors, under normal vision
+# and every simulated color vision deficiency.
+MIN_CVD_DISTANCE = 20
 
 DARK_ACCENTS = {
     "orange": "#f5813f", "amber": "#f2b04a", "gold": "#e3c27e",
@@ -52,6 +62,15 @@ VARIANTS = [
             "green": "#a8bd7d", "teal": "#94bfae", "blue": "#8fb4c4",
             "rose": "#d895a6", "red": "#dd7a6c", "plum": "#bfa2c9",
         },
+    },
+    {
+        "name": "Ember Dusk High Contrast", "appearance": "dark",
+        "min_code": 7.0, "min_muted": 7.0,
+        "bg": "#0f0c0b", "bg_dim": "#080606", "surface": "#141110",
+        "elevated": "#1c1816", "element": "#221d1a", "hover": "#2e2622",
+        "active": "#3b312c", "border": "#4a3f39", "border_var": "#362e2a",
+        "fg": "#fbf6f1", "muted": "#cbbcb0", "comment": "#b5a598",
+        "subtle": "#8f8075", "accents": DARK_ACCENTS,
     },
     {
         "name": "Ember Dawn", "appearance": "light",
@@ -109,14 +128,44 @@ def alpha(h, a):
     return h[:7] + f"{round(a * 255):02x}"
 
 
+def shift(color, dh=0.0, dl=0.0):
+    h, l, s = colorsys.rgb_to_hls(*rgb(color))
+    return hexc(colorsys.hls_to_rgb((h + dh) % 1, max(0, min(1, l + dl)), s))
+
+
+def tune_status(a, bg, min_code):
+    """Pick added/deleted colors that never collapse under color blindness.
+
+    Added drifts from green toward teal and deleted from red toward crimson,
+    with a lightness split, using the smallest change that keeps added vs
+    deleted vs modified at least MIN_CVD_DISTANCE apart for every simulation.
+    """
+    best = None
+    for dh_ok in range(0, 61, 5):            # green -> teal, degrees
+        for dh_bad in range(0, 21, 5):        # red -> crimson, degrees
+            for dl in (0, 0.04, 0.08, 0.12, 0.16):  # added lighter, deleted darker
+                sign = 1 if luminance(bg) < 0.5 else -1
+                ok = ensure(shift(a["green"], dh_ok / 360, sign * dl), bg, min_code)
+                bad = ensure(shift(a["red"], -dh_bad / 360, -sign * dl), bg, min_code)
+                score = min(worst(ok, bad)[0], worst(ok, a["amber"])[0], worst(bad, a["amber"])[0])
+                cost = dh_ok + 2 * dh_bad + 200 * dl
+                if score >= MIN_CVD_DISTANCE and (best is None or cost < best[0]):
+                    best = (cost, ok, bad)
+    if best is None:
+        raise SystemExit("No color-blind-safe added/deleted pair found; adjust the palette.")
+    return best[1], best[2]
+
+
 # --- theme -----------------------------------------------------------------
 
 def build(v):
     bg, dark = v["bg"], v["appearance"] == "dark"
-    a = {k: ensure(c, bg, MIN_CODE) for k, c in v["accents"].items()}
-    fg = ensure(v["fg"], bg, 12 if dark else 11)
-    muted = ensure(v["muted"], bg, MIN_MUTED)
-    comment = ensure(v["comment"], bg, MIN_CODE)
+    min_code = v.get("min_code", MIN_CODE)
+    a = {k: ensure(c, bg, min_code) for k, c in v["accents"].items()}
+    ok, bad = tune_status(a, bg, min_code)
+    fg = ensure(v["fg"], bg, 15 if min_code > MIN_CODE else 12 if dark else 11)
+    muted = ensure(v["muted"], bg, v.get("min_muted", MIN_MUTED))
+    comment = ensure(v["comment"], bg, min_code)
     subtle = ensure(v["subtle"], bg, MIN_SOFT)
     disabled = mix(subtle, bg, 0.25)
     sel = 0.24 if dark else 0.18
@@ -215,19 +264,19 @@ def build(v):
         "terminal.dim_foreground": muted,
         "terminal.ansi.background": bg,
 
-        "version_control.added": a["green"],
+        "version_control.added": ok,
         "version_control.modified": a["amber"],
-        "version_control.deleted": a["red"],
-        "version_control.word_added": alpha(a["green"], 0.30),
-        "version_control.word_deleted": alpha(a["red"], 0.30),
-        "version_control.conflict_marker.ours": alpha(a["green"], 0.18),
+        "version_control.deleted": bad,
+        "version_control.word_added": alpha(ok, 0.30),
+        "version_control.word_deleted": alpha(bad, 0.30),
+        "version_control.conflict_marker.ours": alpha(ok, 0.18),
         "version_control.conflict_marker.theirs": alpha(a["blue"], 0.18),
     }
 
     for name, color in [
-        ("error", a["red"]), ("warning", a["amber"]), ("info", a["blue"]),
-        ("hint", muted), ("success", a["green"]), ("created", a["green"]),
-        ("deleted", a["red"]), ("modified", a["amber"]), ("renamed", a["blue"]),
+        ("error", bad), ("warning", a["amber"]), ("info", a["blue"]),
+        ("hint", muted), ("success", ok), ("created", ok),
+        ("deleted", bad), ("modified", a["amber"]), ("renamed", a["blue"]),
         ("conflict", a["gold"]), ("hidden", subtle), ("ignored", subtle),
         ("predictive", comment), ("unreachable", subtle),
     ]:
@@ -336,8 +385,8 @@ def build(v):
         "link_text": s(a["blue"]),
         "link_uri": s(a["teal"], **italic),
 
-        "diff.plus": s(a["green"]),
-        "diff.minus": s(a["red"]),
+        "diff.plus": s(ok),
+        "diff.minus": s(bad),
         "hint": s(muted, **italic),
         "predictive": s(comment, **italic),
     }
