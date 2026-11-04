@@ -2,6 +2,23 @@
 
 A warm, carefully tuned theme family for [Zed](https://zed.dev): charcoal backgrounds, ember orange and amber accents, and a matching light theme.
 
+![Ember Dusk in Zed](screenshots/ember-dusk.png)
+
+<details>
+<summary>More screenshots</summary>
+
+**Ember Dusk Soft**
+
+![Ember Dusk Soft in Zed](screenshots/ember-dusk-soft.png)
+
+**Ember Dawn**
+
+![Ember Dawn in Zed](screenshots/ember-dawn.png)
+
+</details>
+
+### All variants
+
 | Ember Dusk | Ember Dusk Deep |
 | --- | --- |
 | ![Ember Dusk](previews/ember-dusk.svg) | ![Ember Dusk Deep](previews/ember-dusk-deep.svg) |
